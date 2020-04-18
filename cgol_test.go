@@ -114,24 +114,23 @@ func TestIsAlive(t *testing.T) {
 	grid, game := gridBlock()
 
 	type cellTest struct {
-		x     int
-		y     int
+		cellCoord
 		alive bool
 	}
 
 	var cases = []cellTest{
-		{0, 0, false},
-		{1, 1, true},
-		{2, 2, true},
-		{3, 3, false},
-		{-1, -1, false}, // equates to 3,3
-		{2, -1, false},  // equates to 2, 3
-		{4, 2, false},   // equates to 0, 2
+		{cellCoord{0, 0}, false},
+		{cellCoord{1, 1}, true},
+		{cellCoord{2, 2}, true},
+		{cellCoord{3, 3}, false},
+		{cellCoord{-1, -1}, false}, // equates to 3,3
+		{cellCoord{-1, 2}, false},  // equates to 3, 2
+		{cellCoord{2, 4}, false},   // equates to 2, 0
 	}
 
 	for _, c := range cases {
-		if grid.isAlive(&game, c.x, c.y) != c.alive {
-			t.Errorf("wrong aliveness for cell at %d,%d", c.x, c.y)
+		if grid.isAlive(&game, c.row, c.col) != c.alive {
+			t.Errorf("wrong aliveness for cell at %d,%d", c.row, c.col)
 		}
 	}
 }
