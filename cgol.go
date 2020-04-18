@@ -2,7 +2,6 @@ package main
 
 import (
 	"image/color"
-	"log"
 
 	"github.com/hajimehoshi/ebiten"
 )
@@ -54,6 +53,24 @@ func init() {
 	life.Fill(lifeColor)
 }
 
+func main() {
+	ebiten.SetWindowSize(windowSize, windowSize)
+	ebiten.SetWindowTitle("Conway's Game of Life")
+
+	dimension := windowSize / lifeSize
+	grid := newGameGrid(dimension, dimension)
+	grid.fromCells(gospersGliderGun)
+	g := Game{
+		width:  dimension,
+		height: dimension,
+		grid:   &grid,
+	}
+
+	if err := ebiten.RunGame(&g); err != nil {
+		panic(err)
+	}
+}
+
 // Update applies game changes for a tick.
 func (g *Game) Update(screen *ebiten.Image) error {
 	g.age()
@@ -79,24 +96,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 // Layout sets the scaled game size. We just use same size as screen.
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
 	return windowSize, windowSize
-}
-
-func main() {
-	ebiten.SetWindowSize(windowSize, windowSize)
-	ebiten.SetWindowTitle("Conway's Game of Life")
-
-	dimension := windowSize / lifeSize
-	grid := newGameGrid(dimension, dimension)
-	grid.fromCells(gospersGliderGun)
-	g := Game{
-		width:  dimension,
-		height: dimension,
-		grid:   &grid,
-	}
-
-	if err := ebiten.RunGame(&g); err != nil {
-		log.Fatal(err)
-	}
 }
 
 // isAlive determines if the grid cell at x,y is alive or not.
