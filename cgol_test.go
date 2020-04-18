@@ -5,28 +5,28 @@ import (
 )
 
 // provide 4x4 grid with middle 4 cells alive
-func gridBlock() (gameGrid, Game) {
-	return gameGrid{
+func gridBlock() Game {
+	return Game{width: 4, height: 4, grid: &gameGrid{
 		{false, false, false, false},
 		{false, true, true, false},
 		{false, true, true, false},
 		{false, false, false, false},
-	}, Game{width: 4, height: 4}
+	}}
 }
 
 // 5x5 grid with middle 3 in middle row alive
-func gridBlinker() (gameGrid, Game) {
-	return gameGrid{
+func gridBlinker() Game {
+	return Game{width: 5, height: 5, grid: &gameGrid{
 		{false, false, false, false, false},
 		{false, false, false, false, false},
 		{false, true, true, true, false},
 		{false, false, false, false, false},
 		{false, false, false, false, false},
-	}, Game{width: 5, height: 5}
+	}}
 }
 
-func gridBlinkerPrime() gameGrid {
-	return gameGrid{
+func gridBlinkerPrime() *gameGrid {
+	return &gameGrid{
 		{false, false, false, false, false},
 		{false, false, true, false, false},
 		{false, false, true, false, false},
@@ -38,8 +38,8 @@ func gridBlinkerPrime() gameGrid {
 // glider using a 7x7 grid to start (2 empty cells buffer on each side), but we
 // add extra rows & columns to allow to test the initial pattern not being
 // centered and non-square grids
-func gridGlider() (gameGrid, Game) {
-	return gameGrid{
+func gridGlider() Game {
+	return Game{width: 8, height: 9, grid: &gameGrid{
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, true, false, false, false, false},
@@ -49,11 +49,11 @@ func gridGlider() (gameGrid, Game) {
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
-	}, Game{width: 8, height: 9}
+	}}
 }
 
-func gridGlider1() gameGrid {
-	return gameGrid{
+func gridGlider1() Game {
+	return Game{width: 8, height: 9, grid: &gameGrid{
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
@@ -63,11 +63,11 @@ func gridGlider1() gameGrid {
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
-	}
+	}}
 }
 
-func gridGlider2() gameGrid {
-	return gameGrid{
+func gridGlider2() Game {
+	return Game{width: 8, height: 9, grid: &gameGrid{
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
@@ -77,11 +77,11 @@ func gridGlider2() gameGrid {
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
-	}
+	}}
 }
 
-func gridGlider3() gameGrid {
-	return gameGrid{
+func gridGlider3() Game {
+	return Game{width: 8, height: 9, grid: &gameGrid{
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
@@ -91,13 +91,13 @@ func gridGlider3() gameGrid {
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
-	}
+	}}
 }
 
 // this is back to the original shape, but shifted down and to the right by
 // one in each direction
-func gridGlider4() gameGrid {
-	return gameGrid{
+func gridGlider4() Game {
+	return Game{width: 8, height: 9, grid: &gameGrid{
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
@@ -107,11 +107,11 @@ func gridGlider4() gameGrid {
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
 		{false, false, false, false, false, false, false, false},
-	}
+	}}
 }
 
 func TestIsAlive(t *testing.T) {
-	grid, game := gridBlock()
+	game := gridBlock()
 
 	type cellTest struct {
 		cellCoord
@@ -129,18 +129,18 @@ func TestIsAlive(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		if grid.isAlive(&game, c.row, c.col) != c.alive {
+		if game.isAlive(c.row, c.col) != c.alive {
 			t.Errorf("wrong aliveness for cell at %d,%d", c.row, c.col)
 		}
 	}
 }
 
-func gridsEqual(t *testing.T, g1, g2 gameGrid) bool {
-	height := len(g1)
-	width := len(g1[0])
+func gridsEqual(t *testing.T, g1, g2 *gameGrid) bool {
+	height := g1.height()
+	width := g1.width()
 	for row := 0; row < height; row++ {
 		for col := 0; col < width; col++ {
-			if g1[row][col] != g2[row][col] {
+			if (*g1)[row][col] != (*g2)[row][col] {
 				t.Logf("Grids don't match at row,col: %d,%d", row, col)
 				return false
 			}
@@ -150,45 +150,51 @@ func gridsEqual(t *testing.T, g1, g2 gameGrid) bool {
 }
 
 func TestAgeBlockGrid(t *testing.T) {
-	grid, game := gridBlock()
+	game := gridBlock()
+	origGrid := game.grid
 
-	if !gridsEqual(t, grid, grid.age(&game)) {
+	game.age()
+
+	if !gridsEqual(t, origGrid, game.grid) {
 		t.Error("Block grid did not age properly")
 	}
 }
 
 func TestAgeBlinkerGrid(t *testing.T) {
-	grid, game := gridBlinker()
+	game := gridBlinker()
+	game.age()
 
-	if !gridsEqual(t, grid.age(&game), gridBlinkerPrime()) {
+	if !gridsEqual(t, game.grid, gridBlinkerPrime()) {
 		t.Error("Blinker grid did not age properly")
 	}
 }
 
 func TestAgeGliderGrid(t *testing.T) {
-	g0, game := gridGlider()
+	game := gridGlider()
+	game.age()
 
 	g1 := gridGlider1()
-	if !gridsEqual(t, g0.age(&game), g1) {
+	if !gridsEqual(t, game.grid, g1.grid) {
 		t.Error("Glider grid did not age 1 properly")
 	}
 
+	g1.age()
 	g2 := gridGlider2()
-	if !gridsEqual(t, g1.age(&game), g2) {
+	if !gridsEqual(t, g1.grid, g2.grid) {
 		t.Error("Glider grid did not age 2 properly")
 	}
 
+	g2.age()
 	g3 := gridGlider3()
-	if !gridsEqual(t, g2.age(&game), g3) {
+	if !gridsEqual(t, g2.grid, g3.grid) {
 		t.Log("improperly aged glider:")
-		t.Log(g2.age(&game))
 		t.Error("Glider grid did not age 3 properly")
 	}
 
+	g3.age()
 	g4 := gridGlider4()
-	if !gridsEqual(t, g3.age(&game), g4) {
+	if !gridsEqual(t, g3.grid, g4.grid) {
 		t.Log("improperly aged glider:")
-		t.Log(g3.age(&game))
 		t.Error("Glider grid did not age 4 properly")
 	}
 }
