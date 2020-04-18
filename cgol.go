@@ -78,8 +78,10 @@ func gridPattern(dimension int) *gameGrid {
 		grid.fromCells(hwss)
 	case "pulsar":
 		grid.fromCells(pulsar)
-	case "glider":
-		grid.fromCells(gospersGliderGun)
+	case "gosper":
+		grid.fromCells(gosperGlider)
+	case "simkin":
+		grid.fromCells(simkinGlider)
 	default:
 		panic("Don't know that pattern.")
 	}
