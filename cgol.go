@@ -2,6 +2,7 @@ package main
 
 import (
 	"image/color"
+	"os"
 
 	"github.com/hajimehoshi/ebiten"
 )
@@ -58,17 +59,32 @@ func main() {
 	ebiten.SetWindowTitle("Conway's Game of Life")
 
 	dimension := windowSize / lifeSize
-	grid := newGameGrid(dimension, dimension)
-	grid.fromCells(gospersGliderGun)
 	g := Game{
 		width:  dimension,
 		height: dimension,
-		grid:   &grid,
+		grid:   gridPattern(dimension),
 	}
 
 	if err := ebiten.RunGame(&g); err != nil {
 		panic(err)
 	}
+}
+
+func gridPattern(dimension int) *gameGrid {
+	grid := newGameGrid(dimension, dimension)
+
+	switch os.Args[1] {
+	case "hwss":
+		grid.fromCells(hwss)
+	case "pulsar":
+		grid.fromCells(pulsar)
+	case "glider":
+		grid.fromCells(gospersGliderGun)
+	default:
+		panic("Don't know that pattern.")
+	}
+
+	return &grid
 }
 
 // Update applies game changes for a tick.
