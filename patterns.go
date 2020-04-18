@@ -22,8 +22,7 @@ var pulsar = []cellCoord{
 	{15, 5}, {15, 6}, {15, 7}, {15, 11}, {15, 12}, {15, 13},
 }
 
-// GospersGliderGun is a Gosper's Glider Gun
-var gosperGlider = []cellCoord{
+var gosperGliderGun = []cellCoord{
 	{2, 26},
 	{3, 24}, {3, 26},
 	{4, 14}, {4, 15}, {4, 22}, {4, 23}, {4, 36}, {4, 37},
@@ -35,7 +34,7 @@ var gosperGlider = []cellCoord{
 	{10, 14}, {10, 15},
 }
 
-var simkinGlider = []cellCoord{
+var simkinGliderGun = []cellCoord{
 	{2, 2}, {2, 3}, {2, 9}, {2, 10},
 	{3, 2}, {3, 3}, {3, 9}, {3, 10},
 	{5, 6}, {5, 7},
