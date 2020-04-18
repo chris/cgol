@@ -5,3 +5,11 @@ Goofing around with Ebiten game engine for Go and [Conway's Game of Life](https:
 NOT production level code :)
 
 This uses torroidal array/game grid (edges wrap around).
+
+## How to run
+
+```
+go build && ./cgol <pattern-name>
+```
+
+Pattern names: hwss, pulsar, gosper, or simkin.
